@@ -1,7 +1,7 @@
+from math import sin
 import tkinter
-import matplotlib
-import numpy as np
 import serial
+import numpy as np
 import matplotlib.pyplot as Plot
 from tkinter import StringVar, messagebox
 from PIL import Image,ImageTk
@@ -28,6 +28,9 @@ heightUser = ""
 weightUSer = ""
 spo2 = ""
 bpm = ""
+time = []
+yEcg = []
+yPuls = []
 
 # Funciones
 def on_closing():    
@@ -110,8 +113,8 @@ def on_connect():
         print("CONEXION CON ÉXITO")
         state = 2
         arduinoFind = True
-        UpdateFrame2()
         userFrame.pack(padx=200, pady=50)
+        UpdateFrame2()
         conectionFrame.destroy()
         pass
 
@@ -122,6 +125,11 @@ def on_continue():
     spo2 = "-"
     bpm = "-"
     dataFrame.pack()
+    UpdateFrame3()
+    canvasEcg.get_tk_widget().pack(padx=5,pady=5)
+    canvasPuls.get_tk_widget().pack(padx=5,pady=5)
+    canvasEcg.get_tk_widget().config(width=ecgFrame.winfo_width() - 10, height=ecgFrame.winfo_height() - 20)
+    canvasPuls.get_tk_widget().config(width=pulsFrame.winfo_width() - 10, height=pulsFrame.winfo_height() - 20)
     userFrame.destroy()
 
 def UpdateFrame1():
@@ -139,7 +147,7 @@ def UpdateFrame1():
     connectButton.place(x=midWidth,y=heightButtonConnect)
 
 def UpdateFrame2():
-    labelImgUser.place(x=userFrame.winfo_width()-posXuserFrame, y=posXuserFrame,anchor='ne')
+    labelImgUser.place(relx=0.9,rely=0.05,anchor='ne')
     labelName.place(x=posXuserFrame,y=posXuserFrame)
     newY = posXuserFrame + labelName.winfo_height() + 10
     nameEntry.place(x=posXuserFrame,y=newY)
@@ -179,21 +187,29 @@ def UpdateFrame3():
     labelBPMValue.place(relx=0.2,rely=0.6)
     labelBPMValue.config(text=bpm)
 
+def UpdateGraph(ax, y, time, newValue):
+    y.append(newValue)
+    time.append((len(y) - 1)/100)
+    ax.plot(time,y)
+
+def UpdateTime():
+    time.append()
 # Ventana principal
 mainWindow = tkinter.Tk()
+mainWindow.resizable(False, False)
 
 # Variables
 screen_width = mainWindow.winfo_screenwidth()
 screen_height = mainWindow.winfo_screenheight()
-coeffScreenSize = 0.6
+coeffScreenSize = 0.85
 
 minWidth = int(screen_width*coeffScreenSize)
-minHeight = int(screen_height*(coeffScreenSize+0.12))
+minHeight = int(screen_height*coeffScreenSize)
 print(str(minWidth) + " " + str(minHeight))
 
 # Configuración de la ventana
 mainWindow.title(titleApp)
-mainWindow.iconbitmap('img/ecg3.ico')
+mainWindow.iconbitmap('img/ecg2.ico')
 mainWindow.geometry(str(minWidth) + "x" + str(minHeight))
 mainWindow.config(bg=colorBackground)
 mainWindow.minsize(minWidth, minHeight)
@@ -300,28 +316,33 @@ continueButton = tkinter.Button(userFrame, text="Continuar", command=on_continue
 continueButton.place(x=0.0, y = 0.0, anchor='s')
 
 # Graphs
-figEcg, ax = Plot.subplots()
-x = np.arange(0, 5, 0.1)
-y = np.sin(x)
-ax.plot(x,y)
+figEcg, axEcg = Plot.subplots()
+axEcg.set_title("Electrocardiograma")
+axEcg.set_xlabel("Tiempo")
+axEcg.set_ylabel("Actividad Eléctrica del Corazón")
 canvasEcg = FigureCanvasTkAgg(figEcg, ecgFrame)
-canvasEcg.get_tk_widget().pack(padx=5, pady=5)
+
+figPuls, axPuls = Plot.subplots()
+axPuls.set_title("Pulsioxímetro")
+axPuls.set_xlabel("Tiempo")
+axPuls.set_ylabel("Pulso")
+canvasPuls = FigureCanvasTkAgg(figPuls, pulsFrame)
+
 # Pre-Loop
 conectionFrame.pack(padx=25, pady=25)
 mainWindow.update()
 UpdateFrame1()
-
+t = 0
 #Events Handlers
 mainWindow.protocol("WM_DELETE_WINDOW", on_closing)
 
 # Bucle de la ventana
 while(True):
-    if(state == 1):
-        UpdateFrame1()
-    if(state == 2):
-        UpdateFrame2()
-    if(state == 3):
-        UpdateFrame3()
+    if(state==3):
+        UpdateGraph(axEcg,yEcg,time,sin(t))
+        canvasEcg.draw()
+        canvasEcg
+        t += 0.01
     mainWindow.update()
     if(closeArduino):
         break

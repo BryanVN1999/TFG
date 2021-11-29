@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">HeartApp</string>
+    <string name="title">My Heart</string>
+    <string name="arduino">Arduino Uno</string>
+    <string name="connect">Conectate al bluetooth del Arduino</string>
+    <string name="nameDevice">Nombre: Arduino-BT</string>
+    <string name="passwordDevice">Contraseña: 1234</string>
+    <string name="nextActivity">Continuar</string>
+    <string name="user">Datos del Usuario</string>
+    <string name="nameLabel">Nombre:</string>
+    <string name="surnameLabel">Apellidos:</string>
 </resources>
