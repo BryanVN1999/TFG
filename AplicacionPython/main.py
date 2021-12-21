@@ -1,7 +1,5 @@
-from math import sin
 import tkinter
 import serial
-import numpy as np
 import matplotlib.pyplot as Plot
 from tkinter import StringVar, messagebox
 from PIL import Image,ImageTk
@@ -121,15 +119,15 @@ def on_connect():
 def on_continue():
     global state, spo2, bpm
     state = 3
-    labelNameFram3.config(text=nameUser+", "+surnameUser)
+    labelNameFram3.config(text=nameUser+" "+surnameUser)
     spo2 = "-"
     bpm = "-"
     dataFrame.pack()
     UpdateFrame3()
-    canvasEcg.get_tk_widget().pack(padx=5,pady=5)
-    canvasPuls.get_tk_widget().pack(padx=5,pady=5)
-    canvasEcg.get_tk_widget().config(width=ecgFrame.winfo_width() - 10, height=ecgFrame.winfo_height() - 20)
-    canvasPuls.get_tk_widget().config(width=pulsFrame.winfo_width() - 10, height=pulsFrame.winfo_height() - 20)
+    canvasEcg.get_tk_widget().pack()
+    canvasPuls.get_tk_widget().pack()
+    canvasEcg.get_tk_widget().config(width=ecgFrame.winfo_width(), height=ecgFrame.winfo_height())
+    canvasPuls.get_tk_widget().config(width=pulsFrame.winfo_width(), height=pulsFrame.winfo_height())
     userFrame.destroy()
 
 def UpdateFrame1():
@@ -183,17 +181,7 @@ def UpdateFrame3():
     labelSpo2.place(relx=0.2,rely=0.45)
     labelSpo2Value.place(relx=0.2,rely=0.5)
     labelSpo2Value.config(text=spo2)
-    labelBPM.place(relx=0.2,rely=0.55)
-    labelBPMValue.place(relx=0.2,rely=0.6)
-    labelBPMValue.config(text=bpm)
 
-def UpdateGraph(ax, y, time, newValue):
-    y.append(newValue)
-    time.append((len(y) - 1)/100)
-    ax.plot(time,y)
-
-def UpdateTime():
-    time.append()
 # Ventana principal
 mainWindow = tkinter.Tk()
 mainWindow.resizable(False, False)
@@ -201,7 +189,7 @@ mainWindow.resizable(False, False)
 # Variables
 screen_width = mainWindow.winfo_screenwidth()
 screen_height = mainWindow.winfo_screenheight()
-coeffScreenSize = 0.85
+coeffScreenSize = 0.7
 
 minWidth = int(screen_width*coeffScreenSize)
 minHeight = int(screen_height*coeffScreenSize)
@@ -223,13 +211,13 @@ userFrame.config(width=minWidth, height=minHeight)
 dataFrame = tkinter.Frame(mainWindow)
 dataFrame.config(width=minWidth, height=minHeight)
 ecgFrame = tkinter.Frame(dataFrame)
-ecgFrame.config(width=minWidth*0.7, height=minHeight*0.5, bg="red")
+ecgFrame.config(width=minWidth*0.7, height=minHeight*0.5, bg=colorBackground)
 ecgFrame.place(x=0.0,y=0.0)
 pulsFrame = tkinter.Frame(dataFrame)
-pulsFrame.config(width=minWidth*0.7, height=minHeight*0.5, bg="yellow")
+pulsFrame.config(width=minWidth*0.7, height=minHeight*0.5, bg=colorBackground)
 pulsFrame.place(x=0.0,y=minHeight*0.5)
 parametersFrame = tkinter.Frame(dataFrame)
-parametersFrame.config(width=minWidth*0.3, height=minHeight, bg="orange")
+parametersFrame.config(width=minWidth*0.3, height=minHeight, bg=colorBackground)
 parametersFrame.place(x=minWidth-(minWidth*0.3),y=0.0)
 
 # Widgets_Images
@@ -276,12 +264,6 @@ labelSpo2.place(x=0.0,y=0.0)
 labelSpo2Value = tkinter.Label(parametersFrame)
 labelSpo2Value.config(text=spo2, bg=colorBackground, font=(fontH2, sizeH3), justify='left')
 labelSpo2Value.place(x=0.0,y=0.0)
-labelBPM = tkinter.Label(parametersFrame)
-labelBPM.config(text="Pulsaciones por minuto:", bg=colorBackground, font=(fontH2, sizeH3), justify='left')
-labelBPM.place(x=0.0,y=0.0)
-labelBPMValue = tkinter.Label(parametersFrame)
-labelBPMValue.config(text=bpm, bg=colorBackground, font=(fontH2, sizeH3), justify='left')
-labelBPMValue.place(x=0.0,y=0.0)
 
 # Widgets_Entries
 comNum = StringVar()
@@ -320,12 +302,16 @@ figEcg, axEcg = Plot.subplots()
 axEcg.set_title("Electrocardiograma")
 axEcg.set_xlabel("Tiempo")
 axEcg.set_ylabel("Actividad Eléctrica del Corazón")
+axEcg.set_xlim(0,100)
+axEcg.set_ylim(0, 5)
 canvasEcg = FigureCanvasTkAgg(figEcg, ecgFrame)
 
 figPuls, axPuls = Plot.subplots()
 axPuls.set_title("Pulsioxímetro")
 axPuls.set_xlabel("Tiempo")
 axPuls.set_ylabel("Pulso")
+axPuls.set_xlim(0,100)
+axPuls.set_ylim(50, 150)
 canvasPuls = FigureCanvasTkAgg(figPuls, pulsFrame)
 
 # Pre-Loop
@@ -333,16 +319,43 @@ conectionFrame.pack(padx=25, pady=25)
 mainWindow.update()
 UpdateFrame1()
 t = 0
+timeMax = 100
 #Events Handlers
 mainWindow.protocol("WM_DELETE_WINDOW", on_closing)
-
 # Bucle de la ventana
 while(True):
-    if(state==3):
-        UpdateGraph(axEcg,yEcg,time,sin(t))
-        canvasEcg.draw()
-        canvasEcg
-        t += 0.01
-    mainWindow.update()
+    #if(state==3):
+        #data = arduino.readline().decode('ascii').split(',')
+        #print(data)
+        #yEcg.append(float(data[0]))
+        #time.append(t)
+        #axEcg.plot(time, yEcg, 'r')
+        #canvasEcg.draw()
+        #canvasEcg.flush_events()
+        #yPuls.append(float(data[1]))
+        #axPuls.plot(time, yPuls, 'r')
+        #canvasPuls.draw()
+        #canvasPuls.flush_events()
+        #labelSpo2Value.config(text=data[2])
+        #if(len(yEcg)==100):
+            #print("LEN IGUAL A 500")
+            #timeMax += 100
+            #yEcg = []
+            #time = []
+            #axEcg.clear()
+            #axEcg.set_title("Electrocardiograma")
+            #axEcg.set_xlabel("Tiempo")
+            #axEcg.set_ylabel("Actividad Eléctrica del Corazón")
+            #axEcg.set_xlim(timeMax-100,timeMax)
+            #axEcg.set_ylim(0, 5)
+            #yPuls = []
+            #axPuls.clear()
+            #axPuls.set_title("Pulsioxímetro")
+            #axPuls.set_xlabel("Tiempo")
+            #axPuls.set_ylabel("Pulso")
+            #axPuls.set_xlim(timeMax-100,timeMax)
+            #axPuls.set_ylim(50, 200)
+        #t += 1
     if(closeArduino):
         break
+    mainWindow.update()

@@ -9,4 +9,6 @@
     <string name="user">Datos del Usuario</string>
     <string name="nameLabel">Nombre:</string>
     <string name="surnameLabel">Apellidos:</string>
+    <string name="ecgGraph">Electrocardiograma</string>
+    <string name="pulsGraph">Pulsioxímetro</string>
 </resources>

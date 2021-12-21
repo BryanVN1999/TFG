@@ -14,16 +14,20 @@ public class UserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
+
         Button continueButton = findViewById(R.id.saveButton);
         name = findViewById(R.id.name);
         surname = findViewById(R.id.surname);
+
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!isBlankString(name.getText().toString()) && !isBlankString(surname.getText().toString()))
                 {
-                    GraphsActivity.NameUser = name.getText().toString();
-                    GraphsActivity.SurnameUser = surname.getText().toString();
+                    EcgActivity.NameUser = name.getText().toString();
+                    EcgActivity.SurnameUser = surname.getText().toString();
+                    Spo2Activity.NameUser = name.getText().toString();
+                    Spo2Activity.SurnameUser = surname.getText().toString();
                     Intent toGraphs = new Intent(v.getContext(), GraphsActivity.class);
                     startActivity(toGraphs);
                 } else {

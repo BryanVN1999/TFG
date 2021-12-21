@@ -16,9 +16,24 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".GraphsActivity"
-                  android:parentActivityName=".UserActivity"
-                  android:screenOrientation="portrait">
+        <activity android:name=".Spo2Activity"
+                  android:parentActivityName=".GraphsActivity"
+                  android:screenOrientation="landscape">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".MainActivity"/>
+        </activity>
+        <activity android:name=".EcgActivity"
+                  android:parentActivityName=".GraphsActivity"
+                  android:screenOrientation="landscape">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".MainActivity"/>
+        </activity>
+        <activity
+                android:name=".GraphsActivity"
+                android:parentActivityName=".UserActivity"
+                android:screenOrientation="portrait">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".MainActivity"/>
